@@ -1,2 +1,2 @@
 export const AUTHENTICATION = 'authentication';
-export const SHOP = 'shop';
+export const STORE = 'store';

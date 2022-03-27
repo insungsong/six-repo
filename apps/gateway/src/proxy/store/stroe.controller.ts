@@ -2,14 +2,15 @@ import { CustomType } from '@libs/common/constant/custom.type';
 import { SixShopErrorCode } from '@libs/common/constant/six-shop-error-code';
 import { SixShopServiceType } from '@libs/common/constant/six-shop-service-type';
 import {
-  FetchMyShopInput,
-  FetchMyShopsInput,
-  UpdateShopInput,
+  FetchMyStoreInput,
+  UpdateProductInput,
+  UpdateStoreInput,
 } from '@libs/common/dto';
-import { RegisterShopInput } from '@libs/common/dto/register-shop.input';
+import { RegisterProductInput } from '@libs/common/dto/register-product.input';
+import { RegisterStoreInput } from '@libs/common/dto/register-store.input';
 import {
-  FetchMyShopOutput,
-  FetchMyShopsOutput,
+  FetchMyStoreOutput,
+  FetchMyStoresOutput,
   Output,
   SixShopException,
 } from '@libs/common/model';
@@ -32,18 +33,17 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CurrentUser, ScopedAuth } from '../../decorator';
-import { ShopProxyService } from './shop.proxy.service';
-import { Response } from 'express';
+import { StoreProxyService } from './store.proxy.service';
 
-@ApiTags('shop')
-@Controller('shop')
-export class ShopController {
+@ApiTags('store')
+@Controller('store')
+export class StoreController {
   private readonly logger: Logger;
-  constructor(private shopService: ShopProxyService) {
+  constructor(private shopService: StoreProxyService) {
     this.logger = new Logger('Authentication');
   }
 
-  async verifyCustomData(input: RegisterShopInput): Promise<Output> {
+  async verifyCustomData(input: RegisterStoreInput): Promise<Output> {
     const customType = [
       CustomType.BOOK_ISSUE_DATE,
       CustomType.EXPIRATION_DATE,
@@ -79,13 +79,13 @@ export class ShopController {
   @ApiResponse({ type: () => Output })
   @ScopedAuth([SixShopServiceType.USER])
   @ApiBearerAuth('Authorization')
-  @Post('/registerShop')
+  @Post('/registerStore')
   @ApiBody({
-    type: RegisterShopInput,
+    type: RegisterStoreInput,
   })
-  async registerShop(
+  async registerStore(
     @CurrentUser() user: any,
-    @Body() input: RegisterShopInput,
+    @Body() input: RegisterStoreInput,
   ) {
     try {
       this.logger.debug(input);
@@ -119,14 +119,14 @@ export class ShopController {
         const result = await this.verifyCustomData(input);
 
         if (result.result === SixShopErrorCode.SUCCESS) {
-          return await this.shopService.registerShop({
+          return await this.shopService.registerStore({
             email: user.email,
             ...input,
           });
         }
       }
 
-      return await this.shopService.registerShop({
+      return await this.shopService.registerStore({
         email: user.email,
         ...input,
       });
@@ -144,27 +144,27 @@ export class ShopController {
   @ApiResponse({ type: () => Output })
   @ScopedAuth([SixShopServiceType.USER])
   @ApiBearerAuth('Authorization')
-  @Post('/updateShop')
+  @Post('/updateStore')
   @ApiBody({
-    type: UpdateShopInput,
+    type: UpdateStoreInput,
   })
-  async updateShop(
+  async updateStore(
     @CurrentUser() user: any,
-    @Body() input: UpdateShopInput,
+    @Body() input: UpdateStoreInput,
   ): Promise<Output> {
     try {
       if (input.custom) {
         const result = await this.verifyCustomData(input);
 
         if (result.result === SixShopErrorCode.SUCCESS) {
-          return await this.shopService.updateShop({
+          return await this.shopService.updateStore({
             email: user.email,
             ...input,
           });
         }
       }
 
-      return await this.shopService.updateShop({
+      return await this.shopService.updateStore({
         email: user.email,
         ...input,
       });
@@ -179,21 +179,21 @@ export class ShopController {
   @ApiOperation({
     summary: '나의 상점 fetch query api',
   })
-  @ApiResponse({ type: () => FetchMyShopOutput })
+  @ApiResponse({ type: () => FetchMyStoreOutput })
   @ScopedAuth([SixShopServiceType.USER])
   @ApiBearerAuth('Authorization')
-  @Get('/myShop/:shopId')
-  async fetchMyShop(
+  @Get('/myShop/:storeId')
+  async fetchMyStore(
     @CurrentUser() user: any,
-    @Param('shopId', new ParseUUIDPipe({ version: '4' })) shopId: string,
-  ): Promise<FetchMyShopOutput> {
+    @Param('storeId', new ParseUUIDPipe({ version: '4' })) storeId: string,
+  ): Promise<FetchMyStoreOutput> {
     try {
-      const input: FetchMyShopInput = {
+      const input: FetchMyStoreInput = {
         email: user.email,
-        shopId: shopId,
+        storeId: storeId,
       };
 
-      return await this.shopService.fetchMyShop({
+      return await this.shopService.fetchMyStore({
         email: user.email,
         ...input,
       });
@@ -207,13 +207,13 @@ export class ShopController {
   @ApiOperation({
     summary: '내가 sixshop에서 생성한 상점 list query api',
   })
-  @ApiResponse({ type: () => FetchMyShopsOutput })
+  @ApiResponse({ type: () => FetchMyStoresOutput })
   @ScopedAuth([SixShopServiceType.USER])
   @ApiBearerAuth('Authorization')
-  @Get('/fetchMyShops')
-  async fetchMyShops(@CurrentUser() user: any): Promise<FetchMyShopsOutput> {
+  @Get('/fetchMyStores')
+  async fetchMyStores(@CurrentUser() user: any): Promise<FetchMyStoresOutput> {
     try {
-      return await this.shopService.fetchMyShops({
+      return await this.shopService.fetchMyStores({
         email: user.email,
       });
     } catch (error) {
@@ -229,15 +229,46 @@ export class ShopController {
   @ApiResponse({ type: () => Output })
   @ScopedAuth([SixShopServiceType.USER])
   @ApiBearerAuth('Authorization')
-  @Post('/updateShop')
+  @Post('/registerProduct')
   @ApiBody({
-    type: UpdateShopInput,
+    type: RegisterProductInput,
   })
   async registerProduct(
     @CurrentUser() user: any,
-    @Body() input: UpdateShopInput,
+    @Body() input: RegisterProductInput,
   ): Promise<Output> {
     try {
+      return await this.shopService.registerProduct({
+        email: user.email,
+        ...input,
+      });
+    } catch (error) {
+      this.logger.error(error);
+      return {
+        result: error.response,
+      };
+    }
+  }
+
+  @ApiOperation({
+    summary: '상품 수정 api',
+  })
+  @ApiResponse({ type: () => Output })
+  @ScopedAuth([SixShopServiceType.USER])
+  @ApiBearerAuth('Authorization')
+  @Post('/updateProduct')
+  @ApiBody({
+    type: UpdateProductInput,
+  })
+  async updateProduct(
+    @CurrentUser() user: any,
+    @Body() input: UpdateProductInput,
+  ): Promise<Output> {
+    try {
+      return await this.shopService.updateProduct({
+        email: user.email,
+        ...input,
+      });
     } catch (error) {
       this.logger.error(error);
       return {

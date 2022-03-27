@@ -1,5 +1,5 @@
-import { ShopStatus } from '@libs/common/constant';
-import { CustomInput } from '@libs/common/dto/register-shop.input';
+import { StroeStatus } from '@libs/common/constant';
+import { CustomInput } from '@libs/common/dto/register-store.input';
 import {
   BaseEntity,
   Column,
@@ -13,8 +13,8 @@ import {
 } from 'typeorm';
 import { CustomerEntity } from '.';
 
-@Entity('shop')
-export class ShopEntity extends BaseEntity {
+@Entity('store')
+export class StoreEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid', {
     name: 'id',
     comment: '상점 id',
@@ -46,7 +46,7 @@ export class ShopEntity extends BaseEntity {
     comment: 'shop 상태값',
     nullable: false,
   })
-  status!: ShopStatus;
+  status!: StroeStatus;
 
   @Column({
     name: 'custom',

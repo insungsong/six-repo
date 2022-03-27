@@ -28,11 +28,11 @@ export class AdditionalRequirementEntity extends BaseEntity {
   customerId: string;
 
   @Column({
-    name: 'shop_id',
+    name: 'store_id',
     type: 'uuid',
     comment: '상점 id',
   })
-  shopId!: string;
+  storeId!: string;
 
   @Column({ name: 'requirement', comment: '요구사항' })
   requirement: string;

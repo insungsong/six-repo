@@ -53,11 +53,11 @@ $ docker-compose up
 
 ```bash
 # 프로젝트안에서 실행되는 application은 크게 3가지 입니다.
-# gateway / authentication / shop
+# gateway / authentication / store
 
 $ nest start gateway —-watch
 $ nest start authentication —-watch
-$ nest start shop —-watch
+$ nest start store —-watch
 ```
 
 <br/>

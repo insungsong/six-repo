@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Many } from '.';
 import { CustomInput } from '../dto';
+import { One } from './output.model';
 
-class FetchMyShops {
+class fetchMyStore {
   @ApiProperty({ nullable: false, description: 'name' })
   name: string;
 
@@ -22,4 +22,4 @@ class FetchMyShops {
   updatedAt: string;
 }
 
-export class FetchMyShopsOutput extends Many(FetchMyShops) {}
+export class FetchMyStoreOutput extends One(fetchMyStore) {}

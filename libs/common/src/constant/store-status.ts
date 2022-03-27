@@ -1,4 +1,4 @@
-export enum ShopStatus {
+export enum StroeStatus {
   AVAILABLE = 'AVAILABLE',
   DELETED = 'DELETED',
 }

@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class FetchMyShopInput {
+export class FetchMyStoreInput {
   email: string;
 
   @ApiProperty({ nullable: false, required: true })
-  shopId?: string;
+  storeId?: string;
 }

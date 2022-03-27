@@ -20,27 +20,43 @@ export class ProductEntity extends BaseEntity {
   @Generated('increment')
   seq!: number;
 
-  @Column({ name: 'store_id', type: 'uuid', comment: 'fk 상정 고유 ID' })
-  storeId: string;
+  @Column({
+    name: 'shop_id',
+    type: 'uuid',
+    comment: 'fk 상정 고유 ID',
+    nullable: false,
+  })
+  storeId!: string;
+
+  @Column({
+    name: 'customer_id',
+    type: 'uuid',
+    comment: 'fk 유저 고유 ID',
+    nullable: false,
+  })
+  customerId: string;
 
   @Column({
     name: 'name',
     comment: '상품 이름',
+    nullable: false,
   })
-  name: string;
+  name!: string;
 
   @Column({
     name: 'price',
     comment: '상품 가격',
+    nullable: false,
   })
-  price: number;
+  price!: string;
 
   @Column('varchar', {
     array: true,
     name: 'categories',
     comment: '상품 카테고리 목록',
+    nullable: true,
   })
-  categories: string[];
+  categories?: string[];
 
   @CreateDateColumn({
     name: 'created_at',

@@ -1,16 +1,16 @@
 import { CommonModule } from '@libs/common';
-import { SHOP } from '@libs/common/constant/six-shop-app.name';
+import { STORE } from '@libs/common/constant/six-shop-app.name';
 import { HttpModule, Module } from '@nestjs/common';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { SixShopConfigService } from 'libs/common/src/config/config.service';
-import { ShopController } from './shop.controller';
-import { ShopProxyService } from './shop.proxy.service';
+import { StoreController } from './stroe.controller';
+import { StoreProxyService } from './store.proxy.service';
 
 @Module({
   imports: [HttpModule, CommonModule],
   providers: [
     {
-      provide: 'SHOP_SERVICE',
+      provide: 'STORE_SERVICE',
       useFactory: (config: SixShopConfigService) =>
         ClientProxyFactory.create({
           transport: Transport.RMQ,
@@ -18,7 +18,7 @@ import { ShopProxyService } from './shop.proxy.service';
             urls: [
               `${config.rabbitmqProto}://${config.rabbitmqUser}:${config.rabbitmqPass}@${config.rabbitmqHost}:${config.rabbitmqPort}`,
             ],
-            queue: SHOP,
+            queue: STORE,
             noAck: true,
             queueOptions: {
               durable: true,
@@ -27,9 +27,9 @@ import { ShopProxyService } from './shop.proxy.service';
         }),
       inject: [SixShopConfigService],
     },
-    ShopProxyService,
+    StoreProxyService,
     SixShopConfigService,
   ],
-  controllers: [ShopController],
+  controllers: [StoreController],
 })
-export class ShopModule {}
+export class StroeModule {}

@@ -3,13 +3,13 @@ import { DatabaseModule } from '@libs/database';
 import {
   AdditionalRequirementRepository,
   CustomerRepository,
-  ShopRepository,
+  StoreRepository,
 } from '@libs/database/respository';
 
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ShopController } from './shop.controller';
-import { ShopService } from './shop.service';
+import { StoreController } from './store.controller';
+import { StoreService } from './store.service';
 
 @Module({
   imports: [
@@ -17,11 +17,11 @@ import { ShopService } from './shop.service';
     DatabaseModule,
     TypeOrmModule.forFeature([
       CustomerRepository,
-      ShopRepository,
+      StoreRepository,
       AdditionalRequirementRepository,
     ]),
   ],
-  controllers: [ShopController],
-  providers: [ShopService],
+  controllers: [StoreController],
+  providers: [StoreService],
 })
-export class ShopModule {}
+export class StoreModule {}

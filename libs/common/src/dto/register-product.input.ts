@@ -1,21 +1,20 @@
 import { StringTransform } from '@libs/common/transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { CustomInput } from '.';
 
-export class UpdateShopInput {
+export class RegisterProductInput {
   email: string;
 
   @ApiProperty({ nullable: false, required: true })
   @StringTransform()
-  name?: string;
+  storeId!: string;
 
   @ApiProperty({ nullable: false, required: true })
-  shopId?: string;
+  @StringTransform()
+  name!: string;
 
-  @ApiProperty({
-    type: CustomInput,
-    description: 'custom data',
-    nullable: true,
-  })
-  custom?: CustomInput;
+  @ApiProperty({ nullable: false, required: true })
+  price: string;
+
+  @ApiProperty({ nullable: false, required: true })
+  categories: string[];
 }

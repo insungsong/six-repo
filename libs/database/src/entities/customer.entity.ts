@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ShopEntity } from './shop.entity';
+import { StoreEntity } from '.';
 
 @Entity('customer')
 export class CustomerEntity extends BaseEntity {
@@ -48,8 +48,8 @@ export class CustomerEntity extends BaseEntity {
   })
   password!: string;
 
-  @OneToMany(() => ShopEntity, (shop) => shop.custom)
-  shop: Promise<ShopEntity[]>;
+  @OneToMany(() => StoreEntity, (shop) => shop.custom)
+  shop: Promise<StoreEntity[]>;
 
   @CreateDateColumn({
     name: 'created_at',

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AuthenticationModule } from './authentication/authentication.module';
-import { ShopModule } from './shop/shop.module';
+import { StroeModule } from './store/store.module';
 
 @Module({
-  imports: [AuthenticationModule, ShopModule],
+  imports: [AuthenticationModule, StroeModule],
 })
 export class ProxyModule {}
