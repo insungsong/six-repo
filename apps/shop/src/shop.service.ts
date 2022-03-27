@@ -1,8 +1,17 @@
-import { CustomType } from '@libs/common/constant';
+import { CustomType, ShopStatus } from '@libs/common/constant';
 import { SixShopErrorCode } from '@libs/common/constant/six-shop-error-code';
-import { UpdateShopInput } from '@libs/common/dto';
+import {
+  FetchMyShopInput,
+  FetchMyShopsInput,
+  UpdateShopInput,
+} from '@libs/common/dto';
 import { RegisterShopInput } from '@libs/common/dto/register-shop.input';
-import { Output, SixShopException } from '@libs/common/model';
+import {
+  FetchMyShopOutput,
+  FetchMyShopsOutput,
+  Output,
+  SixShopException,
+} from '@libs/common/model';
 import {
   AdditionalRequirementRepository,
   CustomerRepository,
@@ -13,6 +22,11 @@ import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class ShopService {
+  constructor(
+    private readonly customerRepository: CustomerRepository,
+    private readonly shopRepository: ShopRepository,
+  ) {}
+
   async registerShop(
     input: RegisterShopInput,
     entityManageer: EntityManager,
@@ -49,6 +63,7 @@ export class ShopService {
         name: input.name,
         customerId: user.id,
         custom: input.custom,
+        status: ShopStatus.AVAILABLE,
       }),
     );
 
@@ -93,6 +108,10 @@ export class ShopService {
 
     const shop = await shopRepository.findOne({ id: input.shopId });
 
+    if (!shop) {
+      throw new SixShopException(SixShopErrorCode.NOT_FOUND_SHOP);
+    }
+
     if (shop.customerId !== user.id) {
       throw new SixShopException(SixShopErrorCode.NOT_MATCH_USER);
     }
@@ -126,6 +145,49 @@ export class ShopService {
 
     return {
       result: SixShopErrorCode.SUCCESS,
+    };
+  }
+
+  async fetchMyShop(input: FetchMyShopInput): Promise<FetchMyShopOutput> {
+    const user = await this.customerRepository.findRegisteredUserByEmail(
+      input.email,
+    );
+
+    if (!user) {
+      throw new SixShopException(SixShopErrorCode.USER_NOT_FOUND);
+    }
+
+    const shop = await this.shopRepository.findOne({
+      id: input.shopId,
+      customerId: user.id,
+    });
+
+    if (!shop) {
+      throw new SixShopException(SixShopErrorCode.NOT_FOUND_MY_SHOP);
+    }
+
+    return {
+      result: SixShopErrorCode.SUCCESS,
+      data: {
+        ...shop,
+      },
+    };
+  }
+
+  async fetchMyShops(input: FetchMyShopsInput): Promise<FetchMyShopsOutput> {
+    const user = await this.customerRepository.findRegisteredUserByEmail(
+      input.email,
+    );
+
+    if (!user) {
+      throw new SixShopException(SixShopErrorCode.USER_NOT_FOUND);
+    }
+
+    const myShops = await this.shopRepository.find({ customerId: user.id });
+
+    return {
+      result: SixShopErrorCode.SUCCESS,
+      data: [...myShops],
     };
   }
 }

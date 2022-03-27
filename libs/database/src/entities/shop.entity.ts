@@ -1,3 +1,4 @@
+import { ShopStatus } from '@libs/common/constant';
 import { CustomInput } from '@libs/common/dto/register-shop.input';
 import {
   BaseEntity,
@@ -27,15 +28,25 @@ export class ShopEntity extends BaseEntity {
   @Column({
     name: 'name',
     comment: '상점 이름',
+    nullable: false,
   })
-  name: string;
+  name!: string;
 
   @Column({
     name: 'customer_id',
     type: 'uuid',
     comment: 'fk 유저 id',
+    nullable: false,
   })
-  customerId: string;
+  customerId!: string;
+
+  @Column({
+    name: 'status',
+    type: 'varchar',
+    comment: 'shop 상태값',
+    nullable: false,
+  })
+  status!: ShopStatus;
 
   @Column({
     name: 'custom',

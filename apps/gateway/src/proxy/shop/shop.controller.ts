@@ -1,10 +1,29 @@
 import { CustomType } from '@libs/common/constant/custom.type';
 import { SixShopErrorCode } from '@libs/common/constant/six-shop-error-code';
 import { SixShopServiceType } from '@libs/common/constant/six-shop-service-type';
-import { UpdateShopInput } from '@libs/common/dto';
+import {
+  FetchMyShopInput,
+  FetchMyShopsInput,
+  UpdateShopInput,
+} from '@libs/common/dto';
 import { RegisterShopInput } from '@libs/common/dto/register-shop.input';
-import { Output, SixShopException } from '@libs/common/model';
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import {
+  FetchMyShopOutput,
+  FetchMyShopsOutput,
+  Output,
+  SixShopException,
+} from '@libs/common/model';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Logger,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Res,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -14,6 +33,7 @@ import {
 } from '@nestjs/swagger';
 import { CurrentUser, ScopedAuth } from '../../decorator';
 import { ShopProxyService } from './shop.proxy.service';
+import { Response } from 'express';
 
 @ApiTags('shop')
 @Controller('shop')
@@ -148,6 +168,76 @@ export class ShopController {
         email: user.email,
         ...input,
       });
+    } catch (error) {
+      this.logger.error(error);
+      return {
+        result: error.response,
+      };
+    }
+  }
+
+  @ApiOperation({
+    summary: '나의 상점 fetch query api',
+  })
+  @ApiResponse({ type: () => FetchMyShopOutput })
+  @ScopedAuth([SixShopServiceType.USER])
+  @ApiBearerAuth('Authorization')
+  @Get('/myShop/:shopId')
+  async fetchMyShop(
+    @CurrentUser() user: any,
+    @Param('shopId', new ParseUUIDPipe({ version: '4' })) shopId: string,
+  ): Promise<FetchMyShopOutput> {
+    try {
+      const input: FetchMyShopInput = {
+        email: user.email,
+        shopId: shopId,
+      };
+
+      return await this.shopService.fetchMyShop({
+        email: user.email,
+        ...input,
+      });
+    } catch (error) {
+      this.logger.error(error.message);
+
+      throw new SixShopException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @ApiOperation({
+    summary: '내가 sixshop에서 생성한 상점 list query api',
+  })
+  @ApiResponse({ type: () => FetchMyShopsOutput })
+  @ScopedAuth([SixShopServiceType.USER])
+  @ApiBearerAuth('Authorization')
+  @Get('/fetchMyShops')
+  async fetchMyShops(@CurrentUser() user: any): Promise<FetchMyShopsOutput> {
+    try {
+      return await this.shopService.fetchMyShops({
+        email: user.email,
+      });
+    } catch (error) {
+      this.logger.error(error.message);
+
+      throw new SixShopException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @ApiOperation({
+    summary: '상품 등록 api',
+  })
+  @ApiResponse({ type: () => Output })
+  @ScopedAuth([SixShopServiceType.USER])
+  @ApiBearerAuth('Authorization')
+  @Post('/updateShop')
+  @ApiBody({
+    type: UpdateShopInput,
+  })
+  async registerProduct(
+    @CurrentUser() user: any,
+    @Body() input: UpdateShopInput,
+  ): Promise<Output> {
+    try {
     } catch (error) {
       this.logger.error(error);
       return {

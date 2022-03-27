@@ -29,7 +29,6 @@ async function bootstrap() {
       .setTitle('SixShop Gateway')
       .setDescription('The SixShop API description')
       .setVersion('1.0.0')
-      .addTag('Nest')
       .addBearerAuth(
         { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
         'Authorization',

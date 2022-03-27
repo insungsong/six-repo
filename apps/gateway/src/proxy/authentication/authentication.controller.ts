@@ -29,7 +29,14 @@ export class AuthenticationController {
   ): Promise<RegisterUserOutput> {
     this.logger.debug(input);
 
-    return await this.authenticationService.registerUser(input);
+    try {
+      return await this.authenticationService.registerUser(input);
+    } catch (error) {
+      this.logger.error(error);
+      return {
+        result: error.response,
+      };
+    }
   }
 
   @ApiOperation({
@@ -50,7 +57,9 @@ export class AuthenticationController {
       });
     } catch (error) {
       this.logger.error(error);
-      throw SixShopException.processException(error);
+      return {
+        result: error.response,
+      };
     }
   }
 }

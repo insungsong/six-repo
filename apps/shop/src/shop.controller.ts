@@ -1,7 +1,15 @@
 import { CMDType } from '@libs/common/constant';
-import { UpdateShopInput } from '@libs/common/dto';
+import {
+  FetchMyShopInput,
+  FetchMyShopsInput,
+  UpdateShopInput,
+} from '@libs/common/dto';
 import { RegisterShopInput } from '@libs/common/dto/register-shop.input';
-import { Output } from '@libs/common/model';
+import {
+  FetchMyShopOutput,
+  FetchMyShopsOutput,
+  Output,
+} from '@libs/common/model';
 import { TransactionBlock } from '@libs/common/transaction';
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
@@ -35,5 +43,15 @@ export class ShopController {
         );
       },
     );
+  }
+
+  @MessagePattern({ cmd: CMDType.FETCH_MY_SHOP })
+  async fetchMyShop(input: FetchMyShopInput): Promise<FetchMyShopOutput> {
+    return await this.shopService.fetchMyShop(input);
+  }
+
+  @MessagePattern({ cmd: CMDType.FETCH_MY_SHOPS })
+  async fetchMyShops(input: FetchMyShopsInput): Promise<FetchMyShopsOutput> {
+    return await this.shopService.fetchMyShops(input);
   }
 }

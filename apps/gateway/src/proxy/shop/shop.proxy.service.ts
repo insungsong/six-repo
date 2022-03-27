@@ -1,7 +1,16 @@
 import { CMDType } from '@libs/common/constant';
-import { UpdateShopInput } from '@libs/common/dto';
+import {
+  FetchMyShopInput,
+  FetchMyShopsInput,
+  UpdateShopInput,
+} from '@libs/common/dto';
 import { RegisterShopInput } from '@libs/common/dto/register-shop.input';
-import { Output, SixShopException } from '@libs/common/model';
+import {
+  FetchMyShopOutput,
+  FetchMyShopsOutput,
+  Output,
+  SixShopException,
+} from '@libs/common/model';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
@@ -37,6 +46,38 @@ export class ShopProxyService {
       return await lastValueFrom(
         this.client.send<Output, UpdateShopInput>(
           { cmd: CMDType.UPDATE_SHOP },
+          input,
+        ),
+      );
+    } catch (error) {
+      this.logger.error(error);
+      throw SixShopException.processException(error);
+    }
+  }
+
+  async fetchMyShop(input: FetchMyShopInput): Promise<FetchMyShopOutput> {
+    try {
+      this.logger.debug(input);
+
+      return await lastValueFrom(
+        this.client.send<Output, UpdateShopInput>(
+          { cmd: CMDType.FETCH_MY_SHOP },
+          input,
+        ),
+      );
+    } catch (error) {
+      this.logger.error(error);
+      throw SixShopException.processException(error);
+    }
+  }
+
+  async fetchMyShops(input: FetchMyShopsInput): Promise<FetchMyShopsOutput> {
+    try {
+      this.logger.debug(input);
+
+      return await lastValueFrom(
+        this.client.send<Output, UpdateShopInput>(
+          { cmd: CMDType.FETCH_MY_SHOPS },
           input,
         ),
       );
