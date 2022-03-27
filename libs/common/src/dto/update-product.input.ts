@@ -1,5 +1,6 @@
 import { StringTransform } from '@libs/common/transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { ProductStatus } from '../constant';
 
 export class UpdateProductInput {
   email: string;

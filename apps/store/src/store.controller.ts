@@ -1,5 +1,6 @@
 import { CMDType } from '@libs/common/constant';
 import {
+  DeleteStoreInput,
   FetchMyStoreInput,
   FetchMyStoresInput,
   UpdateProductInput,
@@ -41,6 +42,19 @@ export class StoreController {
       async (input, entityManager): Promise<Output> => {
         return await this.shopService.updateStore(
           input as UpdateStoreInput,
+          entityManager,
+        );
+      },
+    );
+  }
+
+  @MessagePattern({ cmd: CMDType.DELETE_STORE })
+  async deleteStore(input: DeleteStoreInput): Promise<Output> {
+    return await TransactionBlock(
+      input,
+      async (input, entityManager): Promise<Output> => {
+        return await this.shopService.deleteStore(
+          input as DeleteStoreInput,
           entityManager,
         );
       },

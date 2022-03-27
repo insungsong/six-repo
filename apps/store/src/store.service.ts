@@ -1,6 +1,7 @@
-import { CustomType, StroeStatus } from '@libs/common/constant';
+import { CustomType, ProductStatus, StroeStatus } from '@libs/common/constant';
 import { SixShopErrorCode } from '@libs/common/constant/six-shop-error-code';
 import {
+  DeleteStoreInput,
   FetchMyStoreInput,
   FetchMyStoresInput,
   UpdateProductInput,
@@ -69,7 +70,7 @@ export class StoreService {
     );
 
     if (!store) {
-      throw new SixShopException(SixShopErrorCode.NOT_CREATE_SHOP);
+      throw new SixShopException(SixShopErrorCode.NOT_CREATE_STORE);
     }
 
     Object.values(input.custom).filter((customData, index) => {
@@ -108,7 +109,7 @@ export class StoreService {
     const store = await storeRepository.findOne({ id: input.storeId });
 
     if (!store) {
-      throw new SixShopException(SixShopErrorCode.NOT_FOUND_SHOP);
+      throw new SixShopException(SixShopErrorCode.NOT_FOUND_STORE);
     }
 
     if (store.customerId !== user.id) {
@@ -147,6 +148,55 @@ export class StoreService {
     };
   }
 
+  async deleteStore(
+    input: DeleteStoreInput,
+    entityManager: EntityManager,
+  ): Promise<Output> {
+    const userRepository =
+      entityManager.getCustomRepository<CustomerRepository>(CustomerRepository);
+
+    const user = await userRepository.findRegisteredUserByEmail(input.email);
+
+    if (!user) {
+      throw new SixShopException(SixShopErrorCode.USER_NOT_FOUND);
+    }
+
+    const storeRepository =
+      entityManager.getCustomRepository<StoreRepository>(StoreRepository);
+
+    const store = await storeRepository.findOne({ id: input.storeId });
+
+    //TO DO : 상점을 생성한 사람인지?
+    if (store.customerId != user.id) {
+      throw new SixShopException(SixShopErrorCode.NOT_MATCH_USER);
+    }
+
+    const productRepository =
+      entityManager.getCustomRepository<ProductRepository>(ProductRepository);
+
+    const products = await productRepository.find({ storeId: store.id });
+
+    //TO DO : 상점이 생성될때 만들어진 Product를 다 DELETE 처리 해야한다.
+    await Promise.all(
+      products.map(async (product) => {
+        await productRepository.update(
+          { id: product.id },
+          { status: ProductStatus.DELETED },
+        );
+      }),
+    );
+
+    //TO DO : 상점이 DELETE 처리 되어야한다.
+    await storeRepository.update(
+      { id: store.id },
+      { status: StroeStatus.DELETED },
+    );
+
+    return {
+      result: SixShopErrorCode.SUCCESS,
+    };
+  }
+
   async fetchMyStore(input: FetchMyStoreInput): Promise<FetchMyStoreOutput> {
     const user = await this.customerRepository.findRegisteredUserByEmail(
       input.email,
@@ -162,7 +212,7 @@ export class StoreService {
     });
 
     if (!store) {
-      throw new SixShopException(SixShopErrorCode.NOT_FOUND_MY_SHOP);
+      throw new SixShopException(SixShopErrorCode.NOT_FOUND_MY_STORE);
     }
 
     return {
@@ -212,7 +262,7 @@ export class StoreService {
     });
 
     if (!store) {
-      throw new SixShopException(SixShopErrorCode.NOT_FOUND_SHOP);
+      throw new SixShopException(SixShopErrorCode.NOT_FOUND_STORE);
     }
 
     const productRepository =
@@ -225,6 +275,7 @@ export class StoreService {
         storeId: store.id,
         customerId: user.id,
         categories: input.categories,
+        status: ProductStatus.AVAILABLE,
       }),
     );
 

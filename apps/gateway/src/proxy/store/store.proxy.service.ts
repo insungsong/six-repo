@@ -1,5 +1,6 @@
 import { CMDType } from '@libs/common/constant';
 import {
+  DeleteStoreInput,
   FetchMyStoreInput,
   FetchMyStoresInput,
   UpdateProductInput,
@@ -48,6 +49,20 @@ export class StoreProxyService {
       return await lastValueFrom(
         this.client.send<Output, UpdateStoreInput>(
           { cmd: CMDType.UPDATE_STORE },
+          input,
+        ),
+      );
+    } catch (error) {
+      this.logger.error(error);
+      throw SixShopException.processException(error);
+    }
+  }
+
+  async deleteStore(input: DeleteStoreInput): Promise<Output> {
+    try {
+      return await lastValueFrom(
+        this.client.send<Output, DeleteStoreInput>(
+          { cmd: CMDType.DELETE_STORE },
           input,
         ),
       );

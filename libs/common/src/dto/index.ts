@@ -5,3 +5,4 @@ export * from './update-store.input';
 export * from './fetch-my-store.input';
 export * from './fetch-my-stores.input';
 export * from './update-product.input';
+export * from './delete-store.input';

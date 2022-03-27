@@ -1,3 +1,4 @@
+import { ProductStatus } from '@libs/common/constant';
 import {
   BaseEntity,
   Column,
@@ -35,6 +36,9 @@ export class ProductEntity extends BaseEntity {
     nullable: false,
   })
   customerId: string;
+
+  @Column({ name: 'status', type: 'varchar', nullable: false })
+  status!: ProductStatus;
 
   @Column({
     name: 'name',

@@ -5,3 +5,4 @@ export * from './six-shop-app.name';
 export * from './six-shop-error-code';
 export * from './six-shop-service-type';
 export * from './store-status';
+export * from './product-status';

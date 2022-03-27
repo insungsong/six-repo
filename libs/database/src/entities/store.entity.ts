@@ -60,7 +60,7 @@ export class StoreEntity extends BaseEntity {
     onDelete: 'RESTRICT',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn({ name: 'customer', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'customer_id', referencedColumnName: 'id' })
   customer: CustomerEntity;
 
   @CreateDateColumn({

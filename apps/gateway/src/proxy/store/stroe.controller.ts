@@ -2,6 +2,7 @@ import { CustomType } from '@libs/common/constant/custom.type';
 import { SixShopErrorCode } from '@libs/common/constant/six-shop-error-code';
 import { SixShopServiceType } from '@libs/common/constant/six-shop-service-type';
 import {
+  DeleteStoreInput,
   FetchMyStoreInput,
   UpdateProductInput,
   UpdateStoreInput,
@@ -17,6 +18,7 @@ import {
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Logger,
@@ -166,6 +168,34 @@ export class StoreController {
 
       return await this.shopService.updateStore({
         email: user.email,
+        ...input,
+      });
+    } catch (error) {
+      this.logger.error(error);
+      return {
+        result: error.response,
+      };
+    }
+  }
+
+  @ApiOperation({
+    summary: '상점 삭제 api',
+  })
+  @ApiResponse({ type: () => Output })
+  @ScopedAuth([SixShopServiceType.USER])
+  @ApiBearerAuth('Authorization')
+  @Delete('/deleteStore/:storeId')
+  async deleteStore(
+    @CurrentUser() user: any,
+    @Param('storeId') storeId: string,
+  ): Promise<Output> {
+    try {
+      const input: DeleteStoreInput = {
+        email: user.email,
+        storeId: storeId,
+      };
+
+      return await this.shopService.deleteStore({
         ...input,
       });
     } catch (error) {
