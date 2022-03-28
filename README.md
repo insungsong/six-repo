@@ -22,7 +22,7 @@
 ```bash
 # 해당 six-shop를 git clone 받습니다.
 
-$ git clone <six-shop>
+$ git clone <six-repo>
 ```
 
 ```bash
