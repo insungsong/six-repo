@@ -2,19 +2,31 @@ import { CustomType } from '@libs/common/constant/custom.type';
 import { SixShopErrorCode } from '@libs/common/constant/six-shop-error-code';
 import { SixShopServiceType } from '@libs/common/constant/six-shop-service-type';
 import {
+  DeleteProductInput,
   DeleteStoreInput,
+  FetchMyOrderInput,
+  FetchMyOrdersInput,
   FetchMyStoreInput,
+  FetchProductsInput,
+  RegisterOrderInput,
   UpdateProductInput,
   UpdateStoreInput,
+  FetchProductInput,
+  RegisterProductInput,
+  RegisterStoreInput,
 } from '@libs/common/dto';
-import { RegisterProductInput } from '@libs/common/dto/register-product.input';
-import { RegisterStoreInput } from '@libs/common/dto/register-store.input';
+
 import {
+  FetchMyOrderOutput,
   FetchMyStoreOutput,
   FetchMyStoresOutput,
+  FetchProductOutput,
+  FetchProductsOutput,
   Output,
   SixShopException,
+  FetchMyOrdersOutput,
 } from '@libs/common/model';
+
 import {
   Body,
   Controller,
@@ -25,7 +37,6 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  Res,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -212,7 +223,7 @@ export class StoreController {
   @ApiResponse({ type: () => FetchMyStoreOutput })
   @ScopedAuth([SixShopServiceType.USER])
   @ApiBearerAuth('Authorization')
-  @Get('/myShop/:storeId')
+  @Get('/myStore/:storeId')
   async fetchMyStore(
     @CurrentUser() user: any,
     @Param('storeId', new ParseUUIDPipe({ version: '4' })) storeId: string,
@@ -225,6 +236,146 @@ export class StoreController {
 
       return await this.shopService.fetchMyStore({
         email: user.email,
+        ...input,
+      });
+    } catch (error) {
+      this.logger.error(error.message);
+
+      throw new SixShopException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @ApiOperation({
+    summary: '상점의 상품 삭제 api',
+  })
+  @ApiResponse({ type: () => Output })
+  @ScopedAuth([SixShopServiceType.USER])
+  @ApiBearerAuth('Authorization')
+  @Delete('/deleteProduct/:productId')
+  async deleteProduct(
+    @CurrentUser() user: any,
+    @Param('productId') productId: string,
+  ): Promise<Output> {
+    try {
+      const input: DeleteProductInput = {
+        email: user.email,
+        productId: productId,
+      };
+
+      return await this.shopService.deleteProduct({
+        ...input,
+      });
+    } catch (error) {
+      this.logger.error(error);
+      return {
+        result: error.response,
+      };
+    }
+  }
+
+  @ApiOperation({
+    summary: '쇼핑몰에 해당하는 상품들 list query api',
+  })
+  @ApiResponse({ type: () => FetchProductsOutput })
+  @ScopedAuth([SixShopServiceType.USER])
+  @ApiBearerAuth('Authorization')
+  @Get('/:storeId/products')
+  async fetchProducts(
+    @CurrentUser() user: any,
+    @Param('storeId', new ParseUUIDPipe({ version: '4' })) storeId: string,
+  ): Promise<FetchProductsOutput> {
+    try {
+      const input: FetchProductsInput = {
+        email: user.email,
+        storeId: storeId,
+      };
+      return await this.shopService.fetchProducts({
+        ...input,
+      });
+    } catch (error) {
+      this.logger.error(error.message);
+
+      throw new SixShopException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @ApiOperation({
+    summary: '해당하는 상점의 주문 요청 내역 list query api',
+  })
+  @ApiResponse({ type: () => FetchMyOrdersOutput })
+  @ScopedAuth([SixShopServiceType.USER])
+  @ApiBearerAuth('Authorization')
+  @Get('/:storeId/fetchMyOrder')
+  async fetchMyOrders(
+    @CurrentUser() user: any,
+    @Param('storeId', new ParseUUIDPipe({ version: '4' })) storeId: string,
+  ): Promise<FetchMyOrdersOutput> {
+    const input: FetchMyOrdersInput = {
+      email: user.email,
+      storeId: storeId,
+    };
+    try {
+      return await this.shopService.fetchMyOrders({
+        ...input,
+      });
+    } catch (error) {
+      this.logger.error(error);
+
+      return {
+        result: error.result,
+      };
+    }
+  }
+
+  @ApiOperation({
+    summary: '해당하는 상점의 주문 Detail query api',
+  })
+  @ApiResponse({ type: () => FetchMyOrderOutput })
+  @ScopedAuth([SixShopServiceType.USER])
+  @ApiBearerAuth('Authorization')
+  @Get('/:storeId/:orderId')
+  async fetchMyOrder(
+    @CurrentUser() user: any,
+    @Param('storeId', new ParseUUIDPipe({ version: '4' })) storeId: string,
+    @Param('orderId', new ParseUUIDPipe({ version: '4' })) orderId: string,
+  ): Promise<FetchMyOrderOutput> {
+    const input: FetchMyOrderInput = {
+      email: user.email,
+      storeId: storeId,
+      orderId: orderId,
+    };
+    try {
+      return await this.shopService.fetchMyOrder({
+        ...input,
+      });
+    } catch (error) {
+      this.logger.error(error);
+
+      return {
+        result: error.result,
+      };
+    }
+  }
+
+  @ApiOperation({
+    summary: '쇼핑몰에 해당하는 상품 query api',
+  })
+  @ApiResponse({ type: () => FetchProductOutput })
+  @ScopedAuth([SixShopServiceType.USER])
+  @ApiBearerAuth('Authorization')
+  @Get('/:storeId/:productId')
+  async fetchProduct(
+    @CurrentUser() user: any,
+    @Param('storeId', new ParseUUIDPipe({ version: '4' })) storeId: string,
+    @Param('productId', new ParseUUIDPipe({ version: '4' })) productId: string,
+  ): Promise<FetchProductOutput> {
+    try {
+      const input: FetchProductInput = {
+        email: user.email,
+        storeId: storeId,
+        productId: productId,
+      };
+      return await this.shopService.fetchProduct({
         ...input,
       });
     } catch (error) {
@@ -296,6 +447,33 @@ export class StoreController {
   ): Promise<Output> {
     try {
       return await this.shopService.updateProduct({
+        email: user.email,
+        ...input,
+      });
+    } catch (error) {
+      this.logger.error(error);
+      return {
+        result: error.response,
+      };
+    }
+  }
+
+  @ApiOperation({
+    summary: '주문 등록 api',
+  })
+  @ApiResponse({ type: () => Output })
+  @ScopedAuth([SixShopServiceType.USER])
+  @ApiBearerAuth('Authorization')
+  @Post('/registerOrder')
+  @ApiBody({
+    type: RegisterOrderInput,
+  })
+  async registerOrder(
+    @CurrentUser() user: any,
+    @Body() input: RegisterOrderInput,
+  ): Promise<Output> {
+    try {
+      return await this.shopService.registerOrder({
         email: user.email,
         ...input,
       });

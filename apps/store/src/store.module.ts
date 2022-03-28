@@ -3,6 +3,8 @@ import { DatabaseModule } from '@libs/database';
 import {
   AdditionalRequirementRepository,
   CustomerRepository,
+  OrderRepository,
+  ProductRepository,
   StoreRepository,
 } from '@libs/database/respository';
 
@@ -19,6 +21,8 @@ import { StoreService } from './store.service';
       CustomerRepository,
       StoreRepository,
       AdditionalRequirementRepository,
+      ProductRepository,
+      OrderRepository,
     ]),
   ],
   controllers: [StoreController],

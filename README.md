@@ -17,18 +17,6 @@
 <br/>
 <br/>
 
-## ✍️ API 시나리오
-
-##### 👀 ()안의 내용은 API 이름을 의미합니다.
-
-- 회원 가입 API를 호출 (registerUser) - Mutation
-- 회원 인증 및 accessToken 및 refresh Token을 발급(authenticate) - Query
-- 🧑🏻‍💻 작업중..
-
-<br/>
-<br/>
-<br/>
-
 ## 🍴 프로젝트 세팅 방법
 
 ```bash

@@ -1,9 +1,5 @@
 import { AuthenticationInput, RegisterUserInput } from '@libs/common/dto';
-import {
-  AuthenticationOutput,
-  RegisterUserOutput,
-  SixShopException,
-} from '@libs/common/model';
+import { AuthenticationOutput, RegisterUserOutput } from '@libs/common/model';
 import { Body, Controller, Logger, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthenticationProxyService } from './authentication.proxy.service';

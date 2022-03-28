@@ -1,6 +1,6 @@
 import { CMDType } from '@libs/common/constant';
-import { AuthenticationInput } from '@libs/common/dto/authentication.input';
-import { RegisterUserInput } from '@libs/common/dto/register-user.input';
+import { AuthenticationInput, RegisterUserInput } from '@libs/common/dto';
+
 import {
   AuthenticationOutput,
   RegisterUserOutput,

@@ -4,3 +4,8 @@ export * from './output.model';
 export * from './register-user.output';
 export * from './fetch-my-store.output';
 export * from './fetch-my-stores.output';
+export * from './fetch-product.output';
+export * from './fetch-products.output';
+export * from './fetch-product.output';
+export * from './fetch-my-order.output';
+export * from './fetch-my-orders.output';

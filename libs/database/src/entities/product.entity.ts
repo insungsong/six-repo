@@ -22,7 +22,7 @@ export class ProductEntity extends BaseEntity {
   seq!: number;
 
   @Column({
-    name: 'shop_id',
+    name: 'store_id',
     type: 'uuid',
     comment: 'fk 상정 고유 ID',
     nullable: false,

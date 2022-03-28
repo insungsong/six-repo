@@ -1,16 +1,27 @@
 import { CMDType } from '@libs/common/constant';
 import {
+  DeleteProductInput,
   DeleteStoreInput,
+  FetchMyOrderInput,
+  FetchMyOrdersInput,
   FetchMyStoreInput,
   FetchMyStoresInput,
+  FetchProductsInput,
+  RegisterOrderInput,
   UpdateProductInput,
   UpdateStoreInput,
+  FetchProductInput,
+  RegisterProductInput,
+  RegisterStoreInput,
 } from '@libs/common/dto';
-import { RegisterProductInput } from '@libs/common/dto/register-product.input';
-import { RegisterStoreInput } from '@libs/common/dto/register-store.input';
+
 import {
+  FetchMyOrderOutput,
   FetchMyStoreOutput,
   FetchMyStoresOutput,
+  FetchProductOutput,
+  FetchMyOrdersOutput,
+  FetchProductsOutput,
   Output,
   SixShopException,
 } from '@libs/common/model';
@@ -88,6 +99,86 @@ export class StoreProxyService {
     }
   }
 
+  async deleteProduct(input: DeleteProductInput): Promise<Output> {
+    try {
+      this.logger.debug(input);
+
+      return await lastValueFrom(
+        this.client.send<Output, FetchMyStoreInput>(
+          { cmd: CMDType.DELETE_PRODUCT },
+          input,
+        ),
+      );
+    } catch (error) {
+      this.logger.error(error);
+      throw SixShopException.processException(error);
+    }
+  }
+
+  async fetchProduct(input: FetchProductInput): Promise<FetchProductOutput> {
+    try {
+      this.logger.debug(input);
+
+      return await lastValueFrom(
+        this.client.send<FetchProductOutput, FetchMyStoreInput>(
+          { cmd: CMDType.FETCH_PRODUCT },
+          input,
+        ),
+      );
+    } catch (error) {
+      this.logger.error(error);
+      throw SixShopException.processException(error);
+    }
+  }
+
+  async fetchProducts(input: FetchProductsInput): Promise<FetchProductsOutput> {
+    try {
+      this.logger.debug(input);
+
+      return await lastValueFrom(
+        this.client.send<FetchProductsOutput, FetchProductsInput>(
+          { cmd: CMDType.FETCH_PRODUCTS },
+          input,
+        ),
+      );
+    } catch (error) {
+      this.logger.error(error);
+      throw SixShopException.processException(error);
+    }
+  }
+
+  async fetchMyOrders(input: FetchMyOrdersInput): Promise<FetchMyOrdersOutput> {
+    try {
+      this.logger.debug(input);
+
+      return await lastValueFrom(
+        this.client.send<FetchMyOrdersOutput, FetchMyOrdersInput>(
+          { cmd: CMDType.FETCH_MY_ORDERS },
+          input,
+        ),
+      );
+    } catch (error) {
+      this.logger.error(error);
+      throw SixShopException.processException(error);
+    }
+  }
+
+  async fetchMyOrder(input: FetchMyOrderInput): Promise<FetchMyOrderOutput> {
+    try {
+      this.logger.debug(input);
+
+      return await lastValueFrom(
+        this.client.send<FetchMyOrdersOutput, FetchMyOrdersInput>(
+          { cmd: CMDType.FETCH_MY_ORDERS },
+          input,
+        ),
+      );
+    } catch (error) {
+      this.logger.error(error);
+      throw SixShopException.processException(error);
+    }
+  }
+
   async fetchMyStores(input: FetchMyStoresInput): Promise<FetchMyStoresOutput> {
     try {
       this.logger.debug(input);
@@ -123,6 +214,20 @@ export class StoreProxyService {
       return await lastValueFrom(
         this.client.send<Output, UpdateStoreInput>(
           { cmd: CMDType.UPDATE_PRODUCT },
+          input,
+        ),
+      );
+    } catch (error) {
+      this.logger.error(error);
+      throw SixShopException.processException(error);
+    }
+  }
+
+  async registerOrder(input: RegisterOrderInput): Promise<Output> {
+    try {
+      return await lastValueFrom(
+        this.client.send<Output, UpdateStoreInput>(
+          { cmd: CMDType.REGITER_ORDER },
           input,
         ),
       );

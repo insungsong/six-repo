@@ -21,8 +21,14 @@ export class OrderEntity extends BaseEntity {
   @Generated('increment')
   seq!: number;
 
-  @Column({ name: 'store_id', type: 'uuid', comment: 'fk 상정 고유 ID' })
+  @Column({ name: 'customer_id', type: 'uuid', comment: 'fk customer ID' })
+  customerId: string;
+
+  @Column({ name: 'store_id', type: 'uuid', comment: 'fk 상점 고유 ID' })
   storeId: string;
+
+  @Column({ name: 'product_id', type: 'uuid', comment: '상품 ID' })
+  productId: string;
 
   @Column({
     name: 'status',
@@ -31,6 +37,14 @@ export class OrderEntity extends BaseEntity {
     comment: '상태 SixShopRfqStatus',
   })
   status!: OrderStatus;
+
+  @Column({
+    name: 'confirm_payment',
+    type: 'boolean',
+    comment: '입금 확인',
+    default: false,
+  })
+  confirmPayment!: boolean;
 
   @CreateDateColumn({
     name: 'created_at',
